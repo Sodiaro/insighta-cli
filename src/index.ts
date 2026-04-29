@@ -33,9 +33,13 @@ profiles
   .description('List profiles with optional filters')
   .option('-p, --page <n>', 'Page number', '1')
   .option('-l, --limit <n>', 'Items per page', '20')
-  .option('-c, --country <name>', 'Filter by country')
-  .option('-r, --role <title>', 'Filter by job title')
-  .option('-s, --sort <field>', 'Sort field (e.g. years_of_experience:desc)')
+  .option('--gender <gender>', 'Filter by gender (male/female)')
+  .option('--age-group <group>', 'Filter by age group (child/teenager/adult/senior)')
+  .option('--min-age <n>', 'Minimum age')
+  .option('--max-age <n>', 'Maximum age')
+  .option('--country-id <code>', 'Filter by ISO country code (e.g. NG)')
+  .option('--sort-by <field>', 'Sort field (age, created_at, gender_probability)')
+  .option('--order <dir>', 'Sort direction (asc/desc)')
   .action(async (opts) => {
     await listProfiles(opts);
   });
@@ -49,7 +53,7 @@ profiles
 
 profiles
   .command('search <query>')
-  .description('Natural language search (e.g. "engineers in Nigeria with 5+ years")')
+  .description('Natural language search (e.g. "males over 30 in Nigeria")')
   .option('-p, --page <n>', 'Page number', '1')
   .option('-l, --limit <n>', 'Items per page', '20')
   .action(async (query, opts) => {
@@ -59,12 +63,7 @@ profiles
 profiles
   .command('create')
   .description('Create a new profile (admin only)')
-  .requiredOption('-n, --name <full_name>', 'Full name')
-  .requiredOption('-j, --job-title <title>', 'Job title')
-  .requiredOption('-c, --country <name>', 'Country name')
-  .requiredOption('-y, --years <n>', 'Years of experience')
-  .option('-s, --skills <csv>', 'Comma-separated skills')
-  .option('-b, --bio <text>', 'Short bio')
+  .requiredOption('-n, --name <name>', 'Full name to enrich and store')
   .action(async (opts) => {
     await createProfile(opts);
   });
@@ -72,8 +71,9 @@ profiles
 profiles
   .command('export <output>')
   .description('Export profiles to a CSV file')
-  .option('-c, --country <name>', 'Filter by country')
-  .option('-r, --role <title>', 'Filter by job title')
+  .option('--gender <gender>', 'Filter by gender')
+  .option('--age-group <group>', 'Filter by age group')
+  .option('--country-id <code>', 'Filter by ISO country code')
   .action(async (output, opts) => {
     await exportProfiles(output, opts);
   });
