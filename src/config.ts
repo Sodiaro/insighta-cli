@@ -13,6 +13,15 @@ export interface Credentials {
 }
 
 export function loadCredentials(): Credentials | null {
+  // Allow token injection via env var for CI/automated environments
+  if (process.env.INSIGHTA_TOKEN) {
+    return {
+      access_token: process.env.INSIGHTA_TOKEN,
+      refresh_token: process.env.INSIGHTA_REFRESH_TOKEN || '',
+      username: 'env',
+      role: 'unknown',
+    };
+  }
   try {
     if (!fs.existsSync(CREDENTIALS_PATH)) return null;
     return JSON.parse(fs.readFileSync(CREDENTIALS_PATH, 'utf8'));
