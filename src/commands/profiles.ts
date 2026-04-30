@@ -30,6 +30,7 @@ export async function listProfiles(opts: {
   ageGroup?: string;
   minAge?: string;
   maxAge?: string;
+  country?: string;
   countryId?: string;
   sortBy?: string;
   order?: string;
@@ -45,7 +46,8 @@ export async function listProfiles(opts: {
     if (opts.ageGroup) params['age_group'] = opts.ageGroup;
     if (opts.minAge) params['min_age'] = opts.minAge;
     if (opts.maxAge) params['max_age'] = opts.maxAge;
-    if (opts.countryId) params['country_id'] = opts.countryId;
+    const countryCode = opts.country || opts.countryId;
+    if (countryCode) params['country_id'] = countryCode;
     if (opts.sortBy) params['sort_by'] = opts.sortBy;
     if (opts.order) params['order'] = opts.order;
 
@@ -129,7 +131,7 @@ export async function createProfile(opts: { name: string }) {
   }
 }
 
-export async function exportProfiles(outputPath: string, opts: { gender?: string; ageGroup?: string; countryId?: string }) {
+export async function exportProfiles(outputPath: string, opts: { gender?: string; ageGroup?: string; country?: string; countryId?: string }) {
   requireAuth();
   const spinner = ora('Exporting profiles as CSV…').start();
   try {
@@ -137,7 +139,8 @@ export async function exportProfiles(outputPath: string, opts: { gender?: string
     const params: Record<string, string> = { format: 'csv' };
     if (opts.gender) params['gender'] = opts.gender;
     if (opts.ageGroup) params['age_group'] = opts.ageGroup;
-    if (opts.countryId) params['country_id'] = opts.countryId;
+    const countryCode = opts.country || opts.countryId;
+    if (countryCode) params['country_id'] = countryCode;
 
     const res = await client.get('/api/profiles/export', { params, responseType: 'text' });
     spinner.stop();

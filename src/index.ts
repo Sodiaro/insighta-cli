@@ -37,7 +37,8 @@ profiles
   .option('--age-group <group>', 'Filter by age group (child/teenager/adult/senior)')
   .option('--min-age <n>', 'Minimum age')
   .option('--max-age <n>', 'Maximum age')
-  .option('--country-id <code>', 'Filter by ISO country code (e.g. NG)')
+  .option('--country <code>', 'Filter by ISO country code (e.g. NG)')
+  .option('--country-id <code>', 'Filter by ISO country code (alias for --country)')
   .option('--sort-by <field>', 'Sort field (age, created_at, gender_probability)')
   .option('--order <dir>', 'Sort direction (asc/desc)')
   .action(async (opts) => {
@@ -69,13 +70,16 @@ profiles
   });
 
 profiles
-  .command('export <output>')
-  .description('Export profiles to a CSV file')
+  .command('export [output]')
+  .description('Export profiles to a CSV file (defaults to profiles_<timestamp>.csv in cwd)')
+  .requiredOption('--format <fmt>', 'Export format (csv)')
   .option('--gender <gender>', 'Filter by gender')
   .option('--age-group <group>', 'Filter by age group')
-  .option('--country-id <code>', 'Filter by ISO country code')
+  .option('--country <code>', 'Filter by ISO country code (e.g. NG)')
+  .option('--country-id <code>', 'Filter by ISO country code (alias for --country)')
   .action(async (output, opts) => {
-    await exportProfiles(output, opts);
+    const resolvedOutput = output || `profiles_${Date.now()}.csv`;
+    await exportProfiles(resolvedOutput, opts);
   });
 
 // Top-level aliases
